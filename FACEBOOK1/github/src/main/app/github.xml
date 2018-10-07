@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:facebook="http://www.mulesoft.org/schema/mule/facebook" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:github="http://www.mulesoft.org/schema/mule/github" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/github http://www.mulesoft.org/schema/mule/github/current/mule-github.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/facebook http://www.mulesoft.org/schema/mule/facebook/current/mule-facebook.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <github:config name="GitHub__Configuration" connectionUser="fikadu.gebru3@gmail.com" connectionPassword="feresMAY1888" doc:name="GitHub: Configuration"/>
+    <facebook:config-with-oauth name="Facebook" consumerKey="a_fikadu@yahoo.com" consumerSecret="feresMAY1888" doc:name="Facebook"/>
+    <flow name="githubFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
+        <scatter-gather doc:name="Scatter-Gather">
+            <github:get-commits config-ref="GitHub__Configuration" owner="fikaduye" repositoryName="hotmail" doc:name="GitHub"/>
+            <github:get-comments config-ref="GitHub__Configuration" issueId="fikadu.gebru3@gmail.com" repository="hotmail" user="hptmail" doc:name="GitHub"/>
+        </scatter-gather>
+        <collection-aggregator failOnTimeout="true" doc:name="Collection Aggregator">
+            <expression-message-info-mapping messageIdExpression="ACCOUNT PROFILE" correlationIdExpression="USER"/>
+        </collection-aggregator>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <db:no-operation-selected config-ref="" doc:name="Database"/>
+        <facebook:get-album-comments config-ref="Facebook" album="ALL YEARS" since="2015" doc:name="Facebook"/>
+    </flow>
+</mule>
